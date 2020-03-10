@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import task8.entity.ChatUser;
+import task8.entity.jokesClass;
 
 public class LogoutServlet extends ChatServlet {
 	private static final long serialVersionUID = 1L;
@@ -17,6 +18,7 @@ public class LogoutServlet extends ChatServlet {
 		if (name!=null) {
 			// Получить объект, описывающий пользователя с таким именем
 			ChatUser aUser = activeUsers.get(name);
+			//jokesClass timer = timers.get(name);
 			// Если идентификатор сессии пользователя, вошедшего под
 			// этим именем, совпадает с идентификатором сессии
 			// пользователя, пытающегося выйти из чата
@@ -27,6 +29,8 @@ public class LogoutServlet extends ChatServlet {
 				// нужна синхронизация
 				synchronized (activeUsers) {
 					activeUsers.remove(name);
+					timers.get(aUser.getName()).stop();
+					timers.remove(name);
 				}
 				// Сбросить имя пользователя в сессии
 				request.getSession().setAttribute("name", null);

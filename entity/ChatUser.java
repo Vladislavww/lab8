@@ -1,6 +1,6 @@
 package task8.entity;
 
-public class ChatUser {
+public class ChatUser{
 	// »м€ пользовател€
 	private String name;
 	// ѕоследнее врем€ взаимодействи€ с сервером в количестве микросекунд,
@@ -33,4 +33,5 @@ public class ChatUser {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
+	
 }

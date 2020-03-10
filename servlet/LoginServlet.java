@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import task8.entity.ChatUser;
+import task8.entity.jokesClass;
 
 public class LoginServlet extends ChatServlet {
 	private static final long serialVersionUID = 1L;
@@ -110,7 +111,8 @@ public class LoginServlet extends ChatServlet {
 		}
 	}
 		// Возвращает текстовое описание возникшей ошибки или null
-	String processLogonAttempt(String name, HttpServletRequest request,	HttpServletResponse response) throws IOException {
+
+	String processLogonAttempt(String name, HttpServletRequest request,	HttpServletResponse response) throws IOException{
 		// Определить идентификатор Java-сессии пользователя
 		String sessionId = request.getSession().getId();
 		// Извлечь из списка объект, связанный с этим именем
@@ -118,13 +120,16 @@ public class LoginServlet extends ChatServlet {
 		if (aUser==null) {
 			// Если оно свободно, то добавить
 			// нового пользователя в список активных
-			aUser = new ChatUser(name,
-			Calendar.getInstance().getTimeInMillis(), sessionId);
+			aUser = new ChatUser(name,Calendar.getInstance().getTimeInMillis(), sessionId);
 			// Так как одновременно выполняются запросы
 			// от множества пользователей
 			// то необходима синхронизация на ресурсе
+			jokesClass timer = new jokesClass(aUser, messages);
+			
 			synchronized (activeUsers) {
 				activeUsers.put(aUser.getName(), aUser);
+				timers.put(aUser.getName(), timer);
+				timers.get(aUser.getName()).start();
 			}
 		}
 		if (aUser.getSessionId().equals(sessionId) || aUser.getLastInteractionTime()<(Calendar.getInstance().getTimeInMillis()-sessionTimeout*1000)) {
@@ -142,6 +147,7 @@ public class LoginServlet extends ChatServlet {
 			// Добавить cookie в HTTP-ответ
 			response.addCookie(sessionIdCookie);
 			// Перейти к главному окну чата
+			
 			response.sendRedirect(response.encodeRedirectURL("/chat/view.htm"));
 			// Вернуть null, т.е. сообщений об ошибках нет
 			return null;

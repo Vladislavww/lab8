@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import task8.entity.ChatMessage;
 import task8.entity.ChatUser;
+import task8.entity.jokesClass;
 
 public class ChatServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -13,6 +14,7 @@ public class ChatServlet extends HttpServlet {
 	protected HashMap<String, ChatUser> activeUsers;
 	// —писок сообщений чата
 	protected ArrayList<ChatMessage> messages;
+	protected HashMap<String, jokesClass> timers;
 
 	@SuppressWarnings("unchecked")
 	public void init() throws ServletException {
@@ -21,6 +23,7 @@ public class ChatServlet extends HttpServlet {
 		// »звлечь из контекста карту пользователей и список сообщений
 		activeUsers = (HashMap<String, ChatUser>) getServletContext().getAttribute("activeUsers");
 		messages = (ArrayList<ChatMessage>) getServletContext().getAttribute("messages");
+		timers = (HashMap<String, jokesClass>) getServletContext().getAttribute("timers");
 		// ≈сли карта пользователей не определена ...
 		if (activeUsers == null) {
 			// —оздать новую карту
@@ -36,6 +39,10 @@ public class ChatServlet extends HttpServlet {
 			// ѕоместить его в контекст сервлета,
 			// чтобы другие сервлеты могли до него добрать
 			getServletContext().setAttribute("messages", messages);
+		}
+		if(timers == null){
+			timers = new HashMap<String, jokesClass>(100);
+			getServletContext().setAttribute("timers", timers);
 		}
 	}
 }
