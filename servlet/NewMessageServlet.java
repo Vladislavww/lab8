@@ -23,6 +23,7 @@ public class NewMessageServlet extends ChatServlet {
 		if (message!=null && !"".equals(message)) {
 			// По имени из сессии получить ссылку на объект ChatUser
 			ChatUser author = activeUsers.get((String)request.getSession().getAttribute("name"));
+			timers.get(author.getName()).restart();
 			synchronized (messages) {
 				// Добавить в список сообщений новое
 				messages.add(new ChatMessage(message, author, Calendar.getInstance().getTimeInMillis()));
