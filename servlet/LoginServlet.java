@@ -16,7 +16,7 @@ public class LoginServlet extends ChatServlet {
 	private static final long serialVersionUID = 1L;
 	// Длительность сессии, в секундах
 	private int sessionTimeout = 10*60;
-	
+	private int waiting_time = 20000;
 	
 	public void init() throws ServletException {
 		super.init();
@@ -39,7 +39,7 @@ public class LoginServlet extends ChatServlet {
 		String previousSessionId = null;
 		// Если в сессии имя не сохранено, то попытаться
 		// восстановить имя через cookie
-		if (name==null) {
+		if (name==null && request.getCookies()!=null) {
 			// Найти cookie с именем sessionId
 			for (Cookie aCookie: request.getCookies()) {
 				if (aCookie.getName().equals("sessionId")) {
@@ -70,13 +70,13 @@ public class LoginServlet extends ChatServlet {
 		response.setCharacterEncoding("utf8");
 		// Получить поток вывода для HTTP-ответа
 		PrintWriter pw = response.getWriter();
-		pw.println("<html><head><title>Мега-чат!</title><meta httpequiv='Content-Type' content='text/html; charset=utf-8'/></head>");
+		pw.println("<html><head><title>Mega chat</title><meta httpequiv='Content-Type' content='text/html; charset=utf-8'/></head>");
 		// Если возникла ошибка - сообщить о ней
 		if (errorMessage!=null) {
 			pw.println("<p><font color='red'>" + errorMessage +	"</font></p>");
 		}
 		// Вывести форму
-		pw.println("<form action='/chat/' method='post'>Введите имя:<input type='text' name='name' value=''><input type='submit' value='Войти в	чат'>");
+		pw.println("<form action='/chat/' method='post'>Write name:<input type='text' name='name' value=''><input type='submit' value='Enter'>");
 		pw.println("</form></body></html>");
 		// Сбросить сообщение об ошибке в сессии
 		request.getSession().setAttribute("error", null);
@@ -124,7 +124,12 @@ public class LoginServlet extends ChatServlet {
 			// Так как одновременно выполняются запросы
 			// от множества пользователей
 			// то необходима синхронизация на ресурсе
-			jokesClass timer = new jokesClass(aUser, messages);
+			String time = getServletConfig().getInitParameter("JOKE_TIMEOUT");
+			if(time!=null){
+				waiting_time = Integer.parseInt(time);
+			
+			}
+			jokesClass timer = new jokesClass(aUser, messages, waiting_time);
 			
 			synchronized (activeUsers) {
 				activeUsers.put(aUser.getName(), aUser);

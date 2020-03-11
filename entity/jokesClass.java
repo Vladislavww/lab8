@@ -10,21 +10,17 @@ import javax.swing.Timer;
 public class jokesClass{
 	private ChatUser author;
 	private ArrayList<ChatMessage> messages;
-	//private int a=0;
-	private final int Time=20000; //TODO заменить на вз€тие из дескриптора
+	private Timer onlineActionTimer;
+	private final String Joke = "ќп€ть чиновники что-то напутали и не так доложили наверх! –осси€не просили обнулить ипотеки!";
 	
-	private Timer onlineActionTimer = new Timer(Time, new ActionListener(){
-		public void actionPerformed(ActionEvent ev){
-			messages.add(new ChatMessage("abcde", author, Calendar.getInstance().getTimeInMillis()));
-			/*System.out.println(a);
-			a+=1;*/
-		}
-	});
-	
-	public jokesClass(ChatUser user, ArrayList<ChatMessage> messages_new){
-		System.out.println('+');
+	public jokesClass(ChatUser user, ArrayList<ChatMessage> messages_new, int time){
 		author = user;
 		messages = messages_new;
+		onlineActionTimer = new Timer(time, new ActionListener(){
+			public void actionPerformed(ActionEvent ev){
+				messages.add(new ChatMessage("abcde", author, Calendar.getInstance().getTimeInMillis()));
+			}
+		});
 	}
 	
 	public void start(){
